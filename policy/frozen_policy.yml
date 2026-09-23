@@ -1,0 +1,40 @@
+# ExperimentGuard frozen decision policy.
+#
+# FROZEN after development on the EXPLORATORY partition only.
+# Changing any value here invalidates the checksum asserted by
+# tests/test_frozen_policy.py and must be a deliberate, logged act.
+
+policy_version: "1.0.0"
+frozen_on: "2026-09-21"
+developed_on_partition: "exploratory"
+
+# Practical significance threshold (theta).
+# A launch requires evidence that the winning arm's risk ratio exceeds 1 + theta
+# against EVERY other arm, not merely that it differs from one reference arm.
+practical_threshold: 0.05
+
+# Family-wise error control for the decision. The family is the set of all
+# ordered arm comparisons WITHIN one experiment -- not the archive.
+alpha: 0.05
+multiplicity_method: "holm"
+
+# Gatekeeping omnibus test across all arms (2 x K contingency table).
+# This is a gatekeeping procedure, NOT closed testing: it does not test every
+# intersection hypothesis, and no claim of closed-testing error control is made.
+require_omnibus_gate: true
+omnibus_alpha: 0.05
+
+# Documented randomization failure window from the archive authors'
+# June 2024 critical update (Cloudflare cache misconfiguration).
+# Experiments starting in this window are INVALID for causal inference.
+cache_window_start: "2013-06-25"
+cache_window_end: "2014-01-10"
+
+# Prospective power reporting (never post-hoc / observed power).
+power_target: 0.80
+prospective_lifts: [0.05, 0.10, 0.20, 0.50]
+
+# Bayesian cross-check. Reported alongside, never a gate.
+bayes_prior_alpha: 1.0
+bayes_prior_beta: 1.0
+bayes_support_eps: 1.0e-12

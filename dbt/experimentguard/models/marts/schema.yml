@@ -1,0 +1,94 @@
+version: 2
+
+models:
+  - name: dim_experiment
+    description: "Grain: one experiment."
+    columns:
+      - name: test_id
+        tests: [not_null, unique]
+      - name: partition
+        tests:
+          - accepted_values:
+              arguments:
+                values: ["exploratory", "confirmatory", "holdout"]
+      - name: n_arms
+        tests: [not_null]
+
+  - name: dim_arm
+    description: "Grain: one arm (package)."
+    columns:
+      - name: arm_id
+        tests: [not_null, unique]
+      - name: test_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_experiment')
+                field: test_id
+
+  - name: dim_date
+    columns:
+      - name: date_day
+        tests: [not_null, unique]
+
+  - name: fct_arm_result
+    description: "Grain: one arm."
+    columns:
+      - name: arm_id
+        tests:
+          - not_null
+          - unique
+          - relationships:
+              arguments:
+                to: ref('dim_arm')
+                field: arm_id
+
+  - name: fct_arm_comparison
+    description: "Grain: one ordered arm pair. Intervals are descriptive, not adjusted."
+    columns:
+      - name: treatment_arm_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_arm')
+                field: arm_id
+      - name: reference_arm_id
+        tests: [not_null]
+
+  - name: fct_experiment_decision
+    description: "Grain: one experiment, including INVALID ones."
+    columns:
+      - name: test_id
+        tests:
+          - not_null
+          - unique
+          - relationships:
+              arguments:
+                to: ref('dim_experiment')
+                field: test_id
+      - name: decision
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["LAUNCH", "NO_MEANINGFUL_WIN", "CONTINUE", "INVALID"]
+      - name: is_inferentially_eligible
+        tests: [not_null]
+
+  - name: fct_policy_comparison
+    description: "Grain: experiment x policy."
+    columns:
+      - name: policy
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["naive_argmax_ctr", "recorded_first_place", "editor_winner", "experimentguard"]
+      - name: selection_status
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["ONE", "NONE", "MULTIPLE"]

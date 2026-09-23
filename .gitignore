@@ -1,0 +1,32 @@
+# Data — never commit the archive or the warehouse
+data/raw/
+data/*.duckdb
+data/*.duckdb.wal
+exports/
+
+# dbt
+dbt/experimentguard/target/
+dbt/experimentguard/dbt_packages/
+dbt/experimentguard/logs/
+.user.yml
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+build/
+dist/
+
+# Environments
+.venv/
+venv/
+.env
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/

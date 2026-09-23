@@ -1,0 +1,7 @@
+experimentguard:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: "../../data/experimentguard.duckdb"
+      threads: 4

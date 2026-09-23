@@ -1,0 +1,92 @@
+// ExperimentGuard - DAX measures
+//
+// Read powerbi/SEMANTIC_MODEL.md first. Several of these exist specifically to
+// prevent statistically invalid aggregations.
+
+// ---------- Rates ----------
+
+// Aggregate the counts, then divide. Averaging per-arm CTRs would weight a
+// 300-impression arm the same as a 30,000-impression one.
+CTR =
+DIVIDE ( SUM ( fct_arm_result[clicks] ), SUM ( fct_arm_result[impressions] ) )
+
+Total Impressions = SUM ( fct_arm_result[impressions] )
+Total Clicks      = SUM ( fct_arm_result[clicks] )
+Experiments       = DISTINCTCOUNT ( fct_experiment_decision[test_id] )
+
+// ---------- Decision mix ----------
+
+Launches        = CALCULATE ( [Experiments], fct_experiment_decision[decision] = "LAUNCH" )
+Continues       = CALCULATE ( [Experiments], fct_experiment_decision[decision] = "CONTINUE" )
+No Meaningful Win =
+CALCULATE ( [Experiments], fct_experiment_decision[decision] = "NO_MEANINGFUL_WIN" )
+Invalid         = CALCULATE ( [Experiments], fct_experiment_decision[decision] = "INVALID" )
+
+Launch Rate = DIVIDE ( [Launches], [Experiments] )
+
+// ---------- Reliability ----------
+
+// Share of experiments the archive's authors advise against using causally.
+Unreliable Randomisation Rate =
+DIVIDE (
+    CALCULATE ( [Experiments], fct_experiment_decision[randomization_unreliable] = TRUE () ),
+    [Experiments]
+)
+
+// Median, not mean: the MDE distribution is right-skewed, so a mean overstates it.
+Median MDE =
+MEDIANX (
+    FILTER ( fct_experiment_decision, fct_experiment_decision[is_inferentially_eligible] ),
+    fct_experiment_decision[mde_relative]
+)
+
+// The platform's core finding: almost no experiment here could resolve a small lift.
+Share Powered At 10pct =
+VAR Eligible =
+    FILTER ( fct_experiment_decision, fct_experiment_decision[is_inferentially_eligible] )
+RETURN
+    DIVIDE (
+        COUNTROWS ( FILTER ( Eligible, fct_experiment_decision[power_at_10pct] >= 0.8 ) ),
+        COUNTROWS ( Eligible )
+    )
+
+// ---------- Policy comparison ----------
+
+Selections Made =
+CALCULATE (
+    DISTINCTCOUNT ( fct_policy_comparison[test_id] ),
+    fct_policy_comparison[selection_status] = "ONE"
+)
+
+// Denominator is stated explicitly: only experiments where the policy actually
+// selected one arm. 76.4% of the archive has no recorded editor winner at all.
+Selection Rate =
+DIVIDE ( [Selections Made], DISTINCTCOUNT ( fct_policy_comparison[test_id] ) )
+
+No Selection Rate =
+DIVIDE (
+    CALCULATE (
+        DISTINCTCOUNT ( fct_policy_comparison[test_id] ),
+        fct_policy_comparison[selection_status] = "NONE"
+    ),
+    DISTINCTCOUNT ( fct_policy_comparison[test_id] )
+)
+
+// Naive selections that ExperimentGuard would not launch. Phrased as insufficient
+// evidence, NOT as "the effect is zero" -- failing to reject is not proof of no effect.
+Naive Selections Lacking Evidence =
+VAR NaivePicked =
+    CALCULATE (
+        DISTINCTCOUNT ( fct_policy_comparison[test_id] ),
+        fct_policy_comparison[policy] = "naive_argmax_ctr",
+        fct_policy_comparison[selection_status] = "ONE"
+    )
+VAR AlsoLaunched =
+    CALCULATE (
+        DISTINCTCOUNT ( fct_policy_comparison[test_id] ),
+        fct_policy_comparison[policy] = "naive_argmax_ctr",
+        fct_policy_comparison[selection_status] = "ONE",
+        fct_policy_comparison[experimentguard_decision] = "LAUNCH"
+    )
+RETURN
+    DIVIDE ( NaivePicked - AlsoLaunched, NaivePicked )

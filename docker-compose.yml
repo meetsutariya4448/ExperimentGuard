@@ -1,0 +1,13 @@
+services:
+  experimentguard:
+    build: .
+    image: experimentguard:latest
+    ports:
+      - "8501:8501"
+    volumes:
+      # The DuckDB warehouse persists on the host. Run `make ingest && make build`
+      # once (inside or outside the container) to populate it.
+      - ./data:/app/data
+      - ./exports:/app/exports
+    environment:
+      - STREAMLIT_SERVER_HEADLESS=true

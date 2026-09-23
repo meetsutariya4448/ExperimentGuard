@@ -1,0 +1,18 @@
+# The chart palette is validated against the LIGHT chart surface (#fcfcfb): the
+# categorical slots, the two-series audit pair and the contrast/CVD separation checks
+# were all run in light mode. Letting the app follow the viewer's OS theme would put
+# those marks and the hardcoded axis ink on a dark surface they were never checked
+# against, so the theme is pinned rather than left to chance.
+[theme]
+base = "light"
+primaryColor = "#2a78d6"
+backgroundColor = "#fcfcfb"
+secondaryBackgroundColor = "#f5f5f2"
+textColor = "#1a1a18"
+font = "sans serif"
+
+[server]
+headless = true
+
+[browser]
+gatherUsageStats = false

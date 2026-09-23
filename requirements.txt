@@ -1,0 +1,28 @@
+# Core data stack
+pandas>=2.2
+numpy>=1.26
+pyarrow>=15.0
+
+# Warehouse + modeling
+duckdb>=1.1
+dbt-core>=1.8
+dbt-duckdb>=1.8
+
+# Statistics
+scipy>=1.13
+statsmodels>=0.14
+
+# Validation
+pandera>=0.20
+
+# Application
+streamlit>=1.36
+plotly>=5.22
+
+# Reporting
+jinja2>=3.1
+pyyaml>=6.0
+
+# Quality
+pytest>=8.0
+ruff>=0.6

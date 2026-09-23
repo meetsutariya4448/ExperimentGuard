@@ -1,0 +1,36 @@
+[project]
+name = "experimentguard"
+version = "0.1.0"
+description = "A/B-test reliability and experimentation decision platform"
+requires-python = ">=3.12"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "app", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "N", "W"]
+ignore = [
+    "E501",  # line length is handled by the formatter
+    "N803",  # stats code uses conventional names like K, RR, n1
+    "N806",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["N802"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-q --strict-markers"
+markers = [
+    "slow: tests that run large Monte Carlo validations",
+]
