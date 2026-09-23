@@ -22,7 +22,7 @@ things:
 |---|---|---|---|---|
 | 1. Development | `exploratory` | 4,873 | All thresholds and rules were chosen here | Used freely |
 | 2. Validation | `confirmatory` | 22,743 | The **frozen** policy applied unchanged | Evaluated once |
-| 3. Final evaluation | `holdout` | 4,871 | Opened **once**, never used for tuning | See below |
+| 3. Final evaluation | `holdout` | 4,871 | Opened **once**, never used for tuning | Evaluated 2026-09-23 |
 
 ### Stage 1 → 2: the frozen policy generalises
 
@@ -43,9 +43,31 @@ good, and a policy frozen on one partition reproduces itself on one it had never
 ### Stage 3: holdout
 
 <!-- HOLDOUT-RESULTS -->
-**Not yet evaluated.** `policy/HOLDOUT_LOG.md` records no access. The holdout is deliberately
-excluded from `make all`; opening it requires `make holdout`, which writes a dated entry with the
-policy checksum into that log.
+**Evaluated once, on 2026-09-23, using the policy frozen in commit `44b6911`** (SHA-256
+`096283cbe23ba8af…`). The policy was not modified before, during or after this run, and the
+partition will not be evaluated again. The full record — timestamp, command, checksum, output and
+metrics — is in [`policy/HOLDOUT_LOG.md`](policy/HOLDOUT_LOG.md).
+
+| Metric | Exploratory (4,873) | Confirmatory (22,743) | Holdout (4,871) |
+|---|---|---|---|
+| CONTINUE | 76.15% | 76.09% | 75.90% |
+| INVALID | 21.57% | 21.58% | 21.74% |
+| LAUNCH | 2.28% | 2.33% | 2.36% |
+| NO_MEANINGFUL_WIN | 0.00% | 0.00% | 0.00% |
+| Unreliable randomisation | 21.55% | 21.58% | 21.74% |
+| Median minimum detectable effect | 74.3% | 73.3% | 75.2% |
+
+The frozen policy reproduces itself on a partition it had never seen: every decision rate lands
+within 0.3 percentage points of the development partition, and the derived randomisation flag
+holds at 21.7% against the authors' published ~22%.
+
+Read honestly, this is a **null-ish result for the archive, not a flattering one**. The holdout
+confirms what the first two partitions implied: with a median detectable lift of 75.2%, these
+experiments overwhelmingly cannot resolve the effects they were run to measure, so 75.9% land in
+CONTINUE and only 2.4% clear the bar to launch. The platform is doing its job by declining, but
+the underlying archive remains mostly unable to answer its own question — and the marginally
+*higher* MDE here (75.2% vs 74.3%) means the holdout is, if anything, slightly less informative
+than the partition the policy was built on.
 <!-- /HOLDOUT-RESULTS -->
 
 ---
