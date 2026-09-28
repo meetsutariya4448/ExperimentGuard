@@ -1,0 +1,33 @@
+FROM python:3.12-slim AS warehouse
+
+ARG WAREHOUSE_URL="https://github.com/meetsutariya4448/ExperimentGuard/releases/download/dashboard-data-v1/experimentguard-dashboard.duckdb.gz"
+ARG WAREHOUSE_SHA256="ab2c85acc9321ed11d947a0f40108a1a3e8b81db8349b147a564dc136dca1917"
+
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends ca-certificates curl \
+ && rm -rf /var/lib/apt/lists/* \
+ && mkdir -p /warehouse \
+ && curl --fail --location --retry 3 "$WAREHOUSE_URL" --output /tmp/warehouse.duckdb.gz \
+ && echo "$WAREHOUSE_SHA256  /tmp/warehouse.duckdb.gz" | sha256sum --check --strict \
+ && gzip --decompress --stdout /tmp/warehouse.duckdb.gz > /warehouse/experimentguard.duckdb
+
+FROM python:3.12-slim
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONPATH=/app/src \
+    STREAMLIT_SERVER_HEADLESS=true \
+    STREAMLIT_BROWSER_GATHER_USAGE_STATS=false
+
+WORKDIR /app
+
+COPY requirements-app.txt ./
+RUN pip install --no-cache-dir -r requirements-app.txt
+
+COPY src/ ./src/
+COPY app/ ./app/
+COPY policy/ ./policy/
+COPY .streamlit/ ./.streamlit/
+COPY --from=warehouse /warehouse/experimentguard.duckdb ./data/experimentguard.duckdb
+
+CMD ["sh", "-c", "streamlit run app/Home.py --server.address=0.0.0.0 --server.port=${PORT:-8501} --server.headless=true"]

@@ -289,6 +289,24 @@ Docker:
 docker compose up --build  # app on :8501, warehouse mounted from ./data
 ```
 
+### Vercel deployment
+
+Vercel builds `Dockerfile.vercel`, which downloads the immutable
+[`dashboard-data-v1`](https://github.com/meetsutariya4448/ExperimentGuard/releases/tag/dashboard-data-v1)
+release artifact and verifies its SHA-256 before adding it to the image. The artifact contains
+only the seven analytics marts used by the application; raw archive and pipeline-intermediate
+tables are excluded.
+
+To reproduce a future dashboard artifact after running the full pipeline:
+
+```bash
+make dashboard-warehouse
+```
+
+The hosted container is read-only and starts Streamlit on Vercel's `$PORT`. The regular
+`Dockerfile` and `docker-compose.yml` remain the local development path with `./data` mounted as
+a volume.
+
 ## The application
 
 ![Reliability dashboard](docs/screenshots/03-reliability-dashboard.png)

@@ -1,7 +1,7 @@
 PY ?= python
 DBT_DIR = dbt/experimentguard
 
-.PHONY: help setup ingest analyze dbt build test lint fmt app export all clean holdout
+.PHONY: help setup ingest analyze dbt build test lint fmt app export dashboard-warehouse all clean holdout
 
 help:
 	@echo "setup    create the Python 3.12 environment"
@@ -13,6 +13,7 @@ help:
 	@echo "lint     ruff check + format check"
 	@echo "app      launch the Streamlit application"
 	@echo "export   write the Power BI star schema to exports/"
+	@echo "dashboard-warehouse  build the compact deployment warehouse"
 	@echo "all      ingest + build + test + export"
 	@echo "holdout  final, once-only holdout evaluation (records to policy/HOLDOUT_LOG.md)"
 
@@ -51,6 +52,9 @@ app:
 
 export:
 	PYTHONPATH=src $(PY) -m experimentguard.exports
+
+dashboard-warehouse:
+	$(PY) scripts/build_dashboard_warehouse.py
 
 all: ingest build test export
 
