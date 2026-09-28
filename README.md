@@ -2,6 +2,8 @@
 
 **A/B-test reliability and experimentation decision platform.**
 
+**[Open the live ExperimentGuard dashboard](https://experiment-guard-chi.vercel.app)**
+
 ExperimentGuard evaluates the [Upworthy Research Archive](https://osf.io/jd64p/) — 32,487
 fielded headline experiments, including a documented period of unreliable randomisation — and
 returns a governed decision for each one: **LAUNCH**, **CONTINUE**, **NO_MEANINGFUL_WIN** or
