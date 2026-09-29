@@ -16,7 +16,7 @@ headless = true
 
 [client]
 showSidebarNavigation = false
-toolbarMode = "minimal"
+toolbarMode = "viewer"
 
 [browser]
 gatherUsageStats = false

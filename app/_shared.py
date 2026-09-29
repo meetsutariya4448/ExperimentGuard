@@ -119,9 +119,7 @@ def inject_styles() -> None:
             height: 2.5rem;
         }
 
-        [data-testid="stDecoration"],
-        [data-testid="stSidebarNav"],
-        [data-testid="stToolbar"] {
+        [data-testid="stDecoration"], [data-testid="stSidebarNav"] {
             display: none !important;
         }
 
