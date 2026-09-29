@@ -11,12 +11,11 @@ st.set_page_config(page_title="ExperimentGuard", page_icon=":material/science:",
 partition = sh.sidebar("Overview")
 p = sh.policy()
 
-st.title("ExperimentGuard")
-st.markdown(
-    "**Would this A/B test justify shipping the change?** ExperimentGuard evaluates the "
-    "Upworthy Research Archive &mdash; 32,487 fielded headline experiments, including a "
-    "documented period of unreliable randomisation &mdash; and returns a governed decision "
-    "for each one."
+sh.page_header(
+    "ExperimentGuard",
+    "Experiment decision intelligence",
+    "Would this A/B test justify shipping the change? Evaluate 32,487 fielded headline "
+    "experiments with a frozen, auditable decision policy.",
 )
 
 summary = sh.query(
@@ -82,8 +81,7 @@ exactly the failure mode this platform exists to catch.
 
 with right:
     st.subheader("The decision states")
-    for name in sh.DECISION_ORDER:
-        st.markdown(f"**{name}** &mdash; {sh.DECISION_HELP[name]}")
+    sh.decision_legend()
     st.caption(
         "NO_MEANINGFUL_WIN is the precise form of the brief's REJECT state: the evidence "
         "rules out a worthwhile win, rather than merely failing to find one."

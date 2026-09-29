@@ -21,7 +21,12 @@ POLICY_LABEL = {
 }
 STATUS_ORDER = ["ONE", "NONE", "MULTIPLE"]
 
-st.title("Naive versus reliable")
+sh.page_header(
+    "Policy comparison",
+    "Decision behavior",
+    "Compare naive winner selection, archive editorial signals, and the governed "
+    "ExperimentGuard policy on the same experiments.",
+)
 st.markdown(
     "The archive records two of its own selection signals. `first_place` was information "
     "shown to editors; `winner` was what editors ultimately chose. Neither is documented "

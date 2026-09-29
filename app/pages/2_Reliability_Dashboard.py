@@ -14,7 +14,12 @@ st.set_page_config(
 partition = sh.sidebar("Reliability Dashboard")
 p = sh.policy()
 
-st.title("Reliability dashboard")
+sh.page_header(
+    "Reliability dashboard",
+    "Archive diagnostics",
+    "Measure decision mix, statistical power, multiplicity attrition, and agreement across "
+    "inferential frameworks.",
+)
 
 stats = sh.query(
     """

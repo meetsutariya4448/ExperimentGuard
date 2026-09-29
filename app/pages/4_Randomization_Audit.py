@@ -13,7 +13,12 @@ st.set_page_config(
 partition = sh.sidebar("Randomization Audit")
 p = sh.policy()
 
-st.title("Randomisation audit")
+sh.page_header(
+    "Randomisation audit",
+    "Validity and integrity",
+    "Reconstruct the archive's documented cache failure and test whether its allocation "
+    "signature appears in the underlying experiment data.",
+)
 st.markdown(
     f"""
 In June 2024 the archive's authors published a critical update: a suspected **Cloudflare

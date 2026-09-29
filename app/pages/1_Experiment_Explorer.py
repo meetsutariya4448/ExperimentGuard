@@ -12,7 +12,12 @@ st.set_page_config(page_title="Experiment Explorer", page_icon=":material/search
 partition = sh.sidebar("Experiment Explorer")
 p = sh.policy()
 
-st.title("Experiment explorer")
+sh.page_header(
+    "Experiment explorer",
+    "Test-level evidence",
+    "Search the archive, inspect arm-level performance, and trace each governed decision "
+    "back to its statistical evidence.",
+)
 
 f1, f2, f3 = st.columns([2, 1, 1])
 search = f1.text_input("Search headlines", placeholder="e.g. Walmart")

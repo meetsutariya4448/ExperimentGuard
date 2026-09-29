@@ -14,7 +14,12 @@ st.set_page_config(page_title="Decision Report", page_icon=":material/descriptio
 partition = sh.sidebar("Decision Report")
 p = sh.policy()
 
-st.title("Decision report")
+sh.page_header(
+    "Decision report",
+    "Governed exports",
+    "Generate an auditable record for one experiment or export the complete decision set "
+    "for the selected partition.",
+)
 
 tab_single, tab_bulk = st.tabs(["One experiment", "Whole partition"])
 
